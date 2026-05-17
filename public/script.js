@@ -1,37 +1,45 @@
-const API_URL = "http://localhost:5000/api/employees";
+const API_URL = "/api/employees";
 
 async function fetchEmployees() {
 
-    const response = await fetch(API_URL);
+    try {
 
-    const employees = await response.json();
+        const response = await fetch(API_URL);
 
-    const employeeList = document.getElementById("employeeList");
+        const employees = await response.json();
 
-    employeeList.innerHTML = "";
+        const employeeList = document.getElementById("employeeList");
 
-    employees.forEach(employee => {
+        employeeList.innerHTML = "";
 
-        employeeList.innerHTML += `
-        
-        <div class="employee-card">
+        employees.forEach(employee => {
 
-            <h3>${employee.name}</h3>
+            employeeList.innerHTML += `
+            
+            <div class="employee-card">
 
-            <p>Email: ${employee.email}</p>
+                <h3>${employee.name}</h3>
 
-            <p>Department: ${employee.department}</p>
+                <p>Email: ${employee.email}</p>
 
-            <p>Salary: ₹${employee.salary}</p>
+                <p>Department: ${employee.department}</p>
 
-            <button class="delete-btn" onclick="deleteEmployee('${employee._id}')">
-                Delete
-            </button>
+                <p>Salary: ₹${employee.salary}</p>
 
-        </div>
-        
-        `;
-    });
+                <button class="delete-btn" onclick="deleteEmployee('${employee._id}')">
+                    Delete
+                </button>
+
+            </div>
+            
+            `;
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+    }
 }
 
 async function addEmployee() {
@@ -44,32 +52,53 @@ async function addEmployee() {
 
     const salary = document.getElementById("salary").value;
 
-    await fetch(`${API_URL}/add`, {
+    try {
 
-        method: "POST",
+        await fetch(`${API_URL}/add`, {
 
-        headers: {
-            "Content-Type": "application/json"
-        },
+            method: "POST",
 
-        body: JSON.stringify({
-            name,
-            email,
-            department,
-            salary
-        })
-    });
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-    fetchEmployees();
+            body: JSON.stringify({
+                name,
+                email,
+                department,
+                salary
+            })
+        });
+
+        document.getElementById("name").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("department").value = "";
+        document.getElementById("salary").value = "";
+
+        fetchEmployees();
+
+    } catch (error) {
+
+        console.log(error);
+
+    }
 }
 
 async function deleteEmployee(id) {
 
-    await fetch(`${API_URL}/delete/${id}`, {
-        method: "DELETE"
-    });
+    try {
 
-    fetchEmployees();
+        await fetch(`${API_URL}/delete/${id}`, {
+            method: "DELETE"
+        });
+
+        fetchEmployees();
+
+    } catch (error) {
+
+        console.log(error);
+
+    }
 }
 
 fetchEmployees();
