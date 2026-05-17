@@ -13,9 +13,7 @@ app.use(express.static('public'));
 
 app.use('/api/employees', employeeRoutes);
 
-app.get('/', (req, res) => {
-    res.send("Employee Management Server Running");
-});
+
 
 const PORT = process.env.PORT || 5000;
 
