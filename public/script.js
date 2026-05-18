@@ -6,11 +6,24 @@ async function fetchEmployees() {
 
         const response = await fetch(API_URL);
 
+        if (!response.ok) {
+            throw new Error("Failed to fetch employees");
+        }
+
         const employees = await response.json();
 
         const employeeList = document.getElementById("employeeList");
 
         employeeList.innerHTML = "";
+
+        if (employees.length === 0) {
+
+            employeeList.innerHTML = `
+                <p>No employees found</p>
+            `;
+
+            return;
+        }
 
         employees.forEach(employee => {
 
@@ -20,11 +33,11 @@ async function fetchEmployees() {
 
                 <h3>${employee.name}</h3>
 
-                <p>Email: ${employee.email}</p>
+                <p><strong>Email:</strong> ${employee.email}</p>
 
-                <p>Department: ${employee.department}</p>
+                <p><strong>Department:</strong> ${employee.department}</p>
 
-                <p>Salary: ₹${employee.salary}</p>
+                <p><strong>Salary:</strong> ₹${employee.salary}</p>
 
                 <button class="delete-btn" onclick="deleteEmployee('${employee._id}')">
                     Delete
@@ -39,6 +52,8 @@ async function fetchEmployees() {
 
         console.log(error);
 
+        alert("Error loading employees");
+
     }
 }
 
@@ -52,9 +67,16 @@ async function addEmployee() {
 
     const salary = document.getElementById("salary").value;
 
+    if (!name || !email || !department || !salary) {
+
+        alert("Please fill all fields");
+
+        return;
+    }
+
     try {
 
-        await fetch(`${API_URL}/add`, {
+        const response = await fetch(`${API_URL}/add`, {
 
             method: "POST",
 
@@ -70,16 +92,24 @@ async function addEmployee() {
             })
         });
 
+        if (!response.ok) {
+            throw new Error("Failed to add employee");
+        }
+
         document.getElementById("name").value = "";
         document.getElementById("email").value = "";
         document.getElementById("department").value = "";
         document.getElementById("salary").value = "";
+
+        alert("Employee Added Successfully");
 
         fetchEmployees();
 
     } catch (error) {
 
         console.log(error);
+
+        alert("Error adding employee");
 
     }
 }
@@ -88,15 +118,23 @@ async function deleteEmployee(id) {
 
     try {
 
-        await fetch(`${API_URL}/delete/${id}`, {
+        const response = await fetch(`${API_URL}/delete/${id}`, {
             method: "DELETE"
         });
+
+        if (!response.ok) {
+            throw new Error("Failed to delete employee");
+        }
+
+        alert("Employee Deleted");
 
         fetchEmployees();
 
     } catch (error) {
 
         console.log(error);
+
+        alert("Error deleting employee");
 
     }
 }
